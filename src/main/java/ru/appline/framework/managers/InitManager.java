@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit;
 import static ru.appline.framework.managers.DriverManager.getDriver;
 import static ru.appline.framework.managers.DriverManager.quitDriver;
 import static ru.appline.framework.utils.PropConst.*;
+import static ru.appline.framework.managers.ManagerPages.disableManagerPages;
+
 
 /**
  * Класс для инициализации фреймворка
@@ -31,5 +33,6 @@ public class InitManager {
 	 */
 	public static void quitFramework() {
 		quitDriver();
+		disableManagerPages();
 	}
 }

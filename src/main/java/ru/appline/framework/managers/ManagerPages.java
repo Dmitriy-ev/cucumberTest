@@ -39,6 +39,10 @@ public class ManagerPages {
 		}
 		return managerPages;
 	}
+	
+	public static void disableManagerPages() {
+        managerPages = null;
+    }
 
 	/**
 	 * Ленивая инициализация {@link ru.appline.framework.pages.StartPage}
