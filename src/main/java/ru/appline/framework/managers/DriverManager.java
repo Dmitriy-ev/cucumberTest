@@ -2,9 +2,13 @@ package ru.appline.framework.managers;
 
 import static ru.appline.framework.utils.PropConst.*;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Класс для управления веб драйвером
@@ -33,17 +37,31 @@ public class DriverManager {
 	/**
 	 * Метод инициализирующий веб драйвер
 	 */
-	private static void initDriver() {
-		switch (props.getProperty(TYPE_BROWSER)) {
-		case "firefox":
-			System.setProperty("webdriver.gecko.driver", props.getProperty(PATH_GEKO_DRIVER));
-			driver = new FirefoxDriver();
-			break;
-		default:
-			System.setProperty("webdriver.chrome.driver", props.getProperty(PATH_CHROME_DRIVER));
-			driver = new ChromeDriver();
-		}
-	}
+	 private static void initDriver() {
+	        switch (props.getProperty(TYPE_BROWSER)) {
+	            case "firefox":
+	                System.setProperty("webdriver.gecko.driver", props.getProperty(PATH_GEKO_DRIVER));
+	                driver = new FirefoxDriver();
+	                break;
+	            case"chrome":
+	                System.setProperty("webdriver.chrome.driver", props.getProperty(PATH_CHROME_DRIVER));
+	                driver = new ChromeDriver();
+	                break;
+	            case "remote":
+	                DesiredCapabilities capabilities = new DesiredCapabilities();
+	                capabilities.setBrowserName("chrome");
+	                capabilities.setVersion("73.0");
+	                capabilities.setCapability("enableVNC", true);
+	                capabilities.setCapability("enableVideo", false);
+	                try {
+	                    driver = new RemoteWebDriver(
+	                            URI.create("http://selenoid.appline.ru:4445/wd/hub/").toURL(),capabilities
+	                    );
+	                }catch (MalformedURLException e){
+	                    e.printStackTrace();
+	                }
+	        }
+	    }
 
 	/**
 	 * Метод ленивой инициализации веб драйвера
