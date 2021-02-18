@@ -28,12 +28,6 @@ public class Steps {
     	app.getStartPage().selectSubMenu(nameSubMenu);
     }
     
-    @Когда("^Переходим в Iframe$")
-    public void swithTo() {
-    	app.getCreditCalculator().switchToData();
-    }
-    
-    
     @Когда("^Заполняем форму поле/значение$")
     public void filling(DataTable dataTable) {
     	dataTable.cells().forEach(
@@ -46,7 +40,7 @@ public class Steps {
     public void optionalServices(DataTable dataTable) {
     	dataTable.cells().forEach(
     			raw ->{
-    				app.getCreditCalculator().optionalServices(raw.get(0));
+    				app.getCreditCalculator().optionalServices(raw.get(0), raw.get(1));
     			});
     }
     

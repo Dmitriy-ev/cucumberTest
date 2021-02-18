@@ -1,11 +1,13 @@
 package ru.appline.framework.pages;
 
 
+import static ru.appline.framework.managers.DriverManager.getDriver;
+
 import java.util.List;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -42,67 +44,70 @@ public class CreditCalculator extends BasePage {
 	@FindBy(xpath = "//li[@class='_2oHcdFLGCjojtWqwTIofQG']")
 	List<WebElement> finalSum;
 
-
-	/**
-	 *iFrame 
-	 */
-	public void switchToData() {
-		switchTo();
-		scrollToElementJs(calculator);
-	}
-
 	/**
 	 *метод который проходится по первым данным 
 	 */
 	public CreditCalculator filling(String name, String data) {
+		try {
+			getDriver().switchTo().frame(0);
+		}catch (NoSuchFrameException e) {
+			e.printStackTrace();
+		}
+		scrollToElementJs(calculator);
 		WebElement elementData;
 		for (WebElement webElement : entryData) {
 			elementData = webElement.findElement(By.xpath(".//div[@class='dc-input__label-4-9-1']"));
 			if(elementData.getText().contains(name)) {
 				WebElement inputData = webElement.findElement(By.xpath(".//../input"));
-				inputData.sendKeys(Keys.CONTROL,"a");
 				fillInputField(inputData, data);
 			}
 		}
+		getDriver().switchTo().parentFrame();
 		return this;
 	}
-
 	
 	/**
 	 *метод который проходится по вторым данным и делает клики
 	 */
-	public CreditCalculator optionalServices(String name){
+	public CreditCalculator optionalServices(String name, String flag){
+		try {
+			getDriver().switchTo().frame(0);
+		}catch (NoSuchFrameException e) {
+			e.printStackTrace();
+		}
 		WebElement elementServices;
 		for (WebElement webElement : services) {
 			elementServices = webElement.findElement(By.xpath(".//span[@class='_1ZfZYgvLm4KBWPL41DOSO']"));
 			if(elementServices.getText().contains(name)) {
 				WebElement inputData = elementServices.findElement(By.xpath(".//../..//input"));
 				scrollToElementJs(additionalInformation);
-				checked(inputData);
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				switchOptionServices(inputData, flag);
 			}
 		}
+		getDriver().switchTo().parentFrame();
 		return this;
 	}
-
 	/**
 	 *выполняем проверки 
 	 */
-	public CreditCalculator checkFinalSum(String name, String price) {
-		scrollToElementJs(calculator);
-		WebElement finalSumElement;
-		for (WebElement webElement : finalSum) {
-			finalSumElement = webElement.findElement(By.xpath(".//span"));
-			if(finalSumElement.getText().contains(name)) {
-				Assert.assertEquals("сумма поля: " + name + " не соответствует веденному числу",
-						price, webElement.getAttribute("innerText").replaceAll("[^,.0-9]+", ""));
+		public CreditCalculator checkFinalSum(String name, String price) {
+			try {
+				getDriver().switchTo().frame(0);
+			}catch (NoSuchFrameException e) {
+				e.printStackTrace();
 			}
+			scrollToElementJs(calculator);
+			WebElement finalSumElement;
+			for (WebElement webElement : finalSum) {
+				finalSumElement = webElement.findElement(By.xpath(".//span"));
+				if(finalSumElement.getText().contains(name)) {
+					
+					Assert.assertEquals("сумма поля: " + name + " не соответствует веденному числу",
+							price, webElement.getAttribute("innerText").replaceAll("[^,.0-9]+", ""));
+				}
+			}
+			getDriver().switchTo().parentFrame();
+			return this;
 		}
-		return this;
-	}
 
 }
